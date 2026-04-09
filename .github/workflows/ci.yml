@@ -48,7 +48,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake pkg-config
 
       - name: Install Perl deps
-        run: cpanm -n Alien::Build Alien::Build::Plugin::Build::CMake Alien::Build::Plugin::Download::GitHub Alien::cmake3 Test::Alien
+        run: cpanm -n Mojo::DOM58 Alien::cmake3 Alien::Build Alien::Build::Plugin::Build::CMake Alien::Build::Plugin::Download::GitHub Test::Alien
 
       - name: Build and test (share)
         run: ALIEN_INSTALL_TYPE=share perl Makefile.PL && ALIEN_INSTALL_TYPE=share make && ALIEN_INSTALL_TYPE=share make test

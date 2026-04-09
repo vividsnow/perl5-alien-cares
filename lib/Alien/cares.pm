@@ -22,9 +22,11 @@ __END__
 
 =head1 NAME
 
-Alien::cares - Find or build c-ares async DNS resolver library
+Alien::cares - Find or build the c-ares async DNS resolver library
 
 =head1 SYNOPSIS
+
+In your F<Makefile.PL>:
 
     use Alien::cares;
     use ExtUtils::MakeMaker;
@@ -32,29 +34,50 @@ Alien::cares - Find or build c-ares async DNS resolver library
     WriteMakefile(
         ...
         CONFIGURE_REQUIRES => { 'Alien::cares' => 0 },
-        CCFLAGS => Alien::cares->cflags,
-        LIBS    => Alien::cares->libs,
+        INC  => Alien::cares->cflags,
+        LIBS => [Alien::cares->libs],
     );
+
+In your F<alienfile> (if wrapping for another Alien):
+
+    use alienfile;
+    share { requires 'Alien::cares' };
 
 =head1 DESCRIPTION
 
-This module provides the c-ares C library for asynchronous DNS resolution.
-It will use the system library if available (>= 1.22.0), or download and
-build from source if necessary.
+Alien::cares finds or builds the L<c-ares|https://c-ares.org/> C library
+for asynchronous DNS resolution.
+
+=over 4
+
+=item *
+
+If a system-installed c-ares E<gt>= 1.22.0 is detected via C<pkg-config>,
+it is used directly.
+
+=item *
+
+Otherwise the latest release is downloaded from GitHub and built with
+CMake as a static library.
+
+=back
 
 =head1 METHODS
 
-All methods are inherited from L<Alien::Base>.
-
-On macOS with a share install, C<libs> and C<libs_static> append
-C<-Wl,-rpath> so the dynamic linker can find the shared library.
+Inherited from L<Alien::Base>.  On macOS share installs, C<libs> and
+C<libs_static> inject C<-Wl,-rpath> for the dynamic linker.
 
 =head1 SEE ALSO
 
-L<Alien::Base>, L<https://c-ares.org/>
+L<Alien::Base>, L<EV::cares>, L<https://c-ares.org/>
+
+=head1 AUTHOR
+
+vividsnow
 
 =head1 LICENSE
 
-Same terms as Perl 5.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

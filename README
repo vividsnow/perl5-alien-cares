@@ -1,0 +1,45 @@
+NAME
+    Alien::cares - Find or build the c-ares async DNS resolver library
+
+SYNOPSIS
+    In your Makefile.PL:
+
+        use Alien::cares;
+        use ExtUtils::MakeMaker;
+
+        WriteMakefile(
+            ...
+            CONFIGURE_REQUIRES => { 'Alien::cares' => 0 },
+            INC  => Alien::cares->cflags,
+            LIBS => [Alien::cares->libs],
+        );
+
+    In your alienfile (if wrapping for another Alien):
+
+        use alienfile;
+        share { requires 'Alien::cares' };
+
+DESCRIPTION
+    Alien::cares finds or builds the c-ares <https://c-ares.org/> C library
+    for asynchronous DNS resolution.
+
+    *   If a system-installed c-ares >= 1.22.0 is detected via "pkg-config",
+        it is used directly.
+
+    *   Otherwise the latest release is downloaded from GitHub and built
+        with CMake as a static library.
+
+METHODS
+    Inherited from Alien::Base. On macOS share installs, "libs" and
+    "libs_static" inject "-Wl,-rpath" for the dynamic linker.
+
+SEE ALSO
+    Alien::Base, EV::cares, <https://c-ares.org/>
+
+AUTHOR
+    vividsnow
+
+LICENSE
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+

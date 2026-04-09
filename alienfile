@@ -1,0 +1,31 @@
+use alienfile;
+
+plugin 'PkgConfig' => (
+    pkg_name        => 'libcares',
+    minimum_version => '1.22.0',
+);
+
+share {
+    requires 'Alien::Build::Plugin::Build::CMake' => 0;
+
+    plugin 'Download::GitHub' => (
+        github_user => 'c-ares',
+        github_repo => 'c-ares',
+    );
+    plugin 'Extract' => 'tar.gz';
+    plugin 'Build::CMake';
+
+    build [
+        ['%{cmake}',
+            @{ meta->prop->{plugin_build_cmake}->{args} },
+            '-DCMAKE_BUILD_TYPE=Release',
+            '-DCARES_STATIC=ON',
+            '-DCARES_SHARED=OFF',
+            '-DCARES_BUILD_TESTS=OFF',
+            '-DCARES_BUILD_TOOLS=OFF',
+            '%{.install.extract}',
+        ],
+        ['%{cmake}', '--build', '.'],
+        ['%{cmake}', '--install', '.', '--prefix', '%{.install.prefix}'],
+    ];
+};

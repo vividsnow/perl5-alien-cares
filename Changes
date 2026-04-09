@@ -1,0 +1,4 @@
+0.01  2026-04-09
+    - Initial release
+    - System detection via pkg-config (libcares >= 1.22.0)
+    - Source build from GitHub releases using CMake

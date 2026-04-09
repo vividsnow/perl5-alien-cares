@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+
+jobs:
+
+  linux-system:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        perl: ['5.26', '5.32', '5.38', '5.40']
+    name: Linux system - Perl ${{ matrix.perl }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+
+      - name: Install system c-ares
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libcares-dev
+
+      - name: Install Perl deps
+        run: cpanm -n Alien::Build Alien::Build::Plugin::Build::CMake Test::Alien
+
+      - name: Build and test
+        run: perl Makefile.PL && make && make test
+
+  linux-share:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        perl: ['5.26', '5.40']
+    name: Linux share - Perl ${{ matrix.perl }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+
+      - name: Install system deps
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake pkg-config
+
+      - name: Install Perl deps
+        run: cpanm -n Alien::Build Alien::Build::Plugin::Build::CMake Alien::Build::Plugin::Download::GitHub Test::Alien
+
+      - name: Build and test (share)
+        run: ALIEN_INSTALL_TYPE=share perl Makefile.PL && ALIEN_INSTALL_TYPE=share make && ALIEN_INSTALL_TYPE=share make test
+
+  macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        perl: ['5.32', '5.40']
+    name: macOS - Perl ${{ matrix.perl }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+
+      - name: Install system deps
+        run: brew install c-ares pkg-config
+
+      - name: Install Perl deps
+        run: cpanm -n Alien::Build Alien::Build::Plugin::Build::CMake Test::Alien
+
+      - name: Build and test
+        run: perl Makefile.PL && make && make test
+
+  freebsd:
+    runs-on: ubuntu-latest
+    name: FreeBSD
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test on FreeBSD
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y perl5 p5-App-cpanminus pkgconf gmake cmake libcares
+            cpanm -n Alien::Build Alien::Build::Plugin::Build::CMake Test::Alien
+          run: |
+            perl Makefile.PL && gmake && gmake test

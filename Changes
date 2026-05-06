@@ -1,3 +1,7 @@
+0.02  2026-05-06
+    - Drop _add_rpath override (share build is static)
+    - Polish POD
+
 0.01  2026-04-09
     - Initial release
     - System detection via pkg-config (libcares >= 1.22.0)

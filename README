@@ -1,45 +1,68 @@
 NAME
-    Alien::cares - Find or build the c-ares async DNS resolver library
+    Alien::cares - find or build the c-ares asynchronous DNS resolver
+    library
 
 SYNOPSIS
-    In your Makefile.PL:
+    In an XS distribution's Makefile.PL, using Alien::Base::Wrapper:
 
-        use Alien::cares;
         use ExtUtils::MakeMaker;
+        use Alien::Base::Wrapper qw( Alien::cares !export );
 
         WriteMakefile(
-            ...
-            CONFIGURE_REQUIRES => { 'Alien::cares' => 0 },
-            INC  => Alien::cares->cflags,
-            LIBS => [Alien::cares->libs],
+            Alien::Base::Wrapper->mm_args,
+            NAME               => 'My::Module',
+            CONFIGURE_REQUIRES => {
+                'Alien::Base::Wrapper' => 0,
+                'Alien::cares'         => 0,
+            },
+            PREREQ_PM => { 'Alien::cares' => 0 },
         );
 
-    In your alienfile (if wrapping for another Alien):
+    Or, accessing the flags directly:
+
+        use Alien::cares;
+        INC  => Alien::cares->cflags,
+        LIBS => [ Alien::cares->libs ],
+
+    In another distribution's alienfile:
 
         use alienfile;
         share { requires 'Alien::cares' };
 
 DESCRIPTION
-    Alien::cares finds or builds the c-ares <https://c-ares.org/> C library
-    for asynchronous DNS resolution.
+    Alien::cares finds or builds the c-ares <https://c-ares.org/> C library,
+    which provides asynchronous DNS resolution. The dual install strategy
+    follows the Alien::Base convention:
 
-    *   If a system-installed c-ares >= 1.22.0 is detected via "pkg-config",
-        it is used directly.
+    *   A system-installed c-ares >= 1.22.0 detected via "pkg-config" is
+        used directly (*system* install).
 
-    *   Otherwise the latest release is downloaded from GitHub and built
-        with CMake as a static library.
+    *   Otherwise the latest release tarball is downloaded from GitHub and
+        built with CMake as a static library bundled with this distribution
+        (*share* install).
+
+    Set the "ALIEN_INSTALL_TYPE" environment variable to "system" or "share"
+    to force a particular install type.
 
 METHODS
-    Inherited from Alien::Base. On macOS share installs, "libs" and
-    "libs_static" inject "-Wl,-rpath" for the dynamic linker.
+    This module inherits all methods from Alien::Base. The most useful ones
+    are "cflags", "libs", "libs_static", "version", and "install_type".
 
 SEE ALSO
-    Alien::Base, EV::cares, <https://c-ares.org/>
+    *   Alien::Base - the framework this module is built on
+
+    *   Alien::Build::Manual::AlienUser - guide to consuming an Alien
+
+    *   EV::cares - libev-based Perl bindings to c-ares
+
+    *   <https://c-ares.org/> - upstream project
 
 AUTHOR
     vividsnow
 
-LICENSE
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2026 by vividsnow.
+
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.
 

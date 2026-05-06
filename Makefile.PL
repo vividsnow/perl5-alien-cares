@@ -15,9 +15,9 @@ WriteMakefile($abmm->mm_args(
     MIN_PERL_VERSION => '5.014',
 
     CONFIGURE_REQUIRES => {
-        'Alien::Build::MM'                        => '2.37',
-        'Alien::Build::Plugin::Build::CMake'      => 0,
-        'Alien::Build::Plugin::Download::GitHub'  => 0,
+        'Alien::Build::MM'                       => '2.37',
+        'Alien::Build::Plugin::Build::CMake'     => 0,
+        'Alien::Build::Plugin::Download::GitHub' => 0,
     },
     BUILD_REQUIRES => {
         'Alien::Build::MM' => '2.37',
@@ -37,6 +37,9 @@ WriteMakefile($abmm->mm_args(
                 type => 'git',
                 url  => 'https://github.com/vividsnow/perl5-alien-cares.git',
                 web  => 'https://github.com/vividsnow/perl5-alien-cares',
+            },
+            bugtracker => {
+                web => 'https://github.com/vividsnow/perl5-alien-cares/issues',
             },
         },
     },
